@@ -16,43 +16,43 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: yourpassword
-      POSTGRES_USER: youruser
-      POSTGRES_DB: yourdatabase
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: ms-customer-db
 
-  products:
-    build:
-      dockerfile: Dockerfile
-      context: ./products
-    container_name: products
-    ports:
-      - "8002:8002"
-    restart: always
-    depends_on:
-      - "postgres"
-      - "rabbitmq"
-    volumes:
-      - .:/app
-      - /app/products/node_modules
-    env_file:
-      - ./products/.env.dev
+  # products:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./products
+  #   container_name: products
+  #   ports:
+  #     - "8002:8002"
+  #   restart: always
+  #   depends_on:
+  #     - "postgres"
+  #     - "rabbitmq"
+  #   volumes:
+  #     - .:/app
+  #     - /app/products/node_modules
+  #   env_file:
+  #     - ./products/.env.dev
 
-  shopping:
-    build:
-      dockerfile: Dockerfile
-      context: ./shopping
-    container_name: shopping
-    ports:
-      - "8003:8003"
-    restart: always
-    depends_on:
-      - "postgres"
-      - "rabbitmq"
-    volumes:
-      - .:/app
-      - /app/shopping/node_modules
-    env_file:
-      - ./shopping/.env.dev
+  # shopping:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./shopping
+  #   container_name: shopping
+  #   ports:
+  #     - "8003:8003"
+  #   restart: always
+  #   depends_on:
+  #     - "postgres"
+  #     - "rabbitmq"
+  #   volumes:
+  #     - .:/app
+  #     - /app/shopping/node_modules
+  #   env_file:
+  #     - ./shopping/.env.dev
 
   customer:
     build:

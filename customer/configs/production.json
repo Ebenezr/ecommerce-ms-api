@@ -1,0 +1,15 @@
+{
+    "session": {
+      "keys": ["sirikey"],
+      "options": {
+        "key": "masokoUpgrade",
+        "maxAge": 7776000000,
+        "overwrite": true,
+        "httpOnly": false,
+        "signed": true,
+        "rolling": false,
+        "renew": false
+      }
+    }
+  }
+  

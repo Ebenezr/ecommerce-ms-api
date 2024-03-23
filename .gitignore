@@ -5,3 +5,8 @@
 **/.DS_Store
 **/node_modules
 db
+**/*.log
+**/logs/
+**/coverage/
+**/.scannerwork/
+.vscode

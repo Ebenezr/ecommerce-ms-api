@@ -1,5 +1,5 @@
 const convertKeys = require('./convertKeys');
-const Logger = require('./logging');
+const { Logger } = require('./logging');
 const ErrorHandler = require('./errorHandler');
 
 const LogMessages = (

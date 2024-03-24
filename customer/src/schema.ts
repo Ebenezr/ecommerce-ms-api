@@ -1,6 +1,8 @@
 const typeDefs = `#graphql
   type Query {
     backendConfig: BackendConfig
+    customer: Customer
+
   }
   type Mutation{
     signOut: Boolean
@@ -36,6 +38,13 @@ const typeDefs = `#graphql
   input SignIn {
     email: String!
     password: String!
+  }
+  type Customer {
+    id: ID
+    email: String
+    name: String
+    phone: String
+    # addresses: [Address]
   }
 
 `;

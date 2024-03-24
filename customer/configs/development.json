@@ -2,7 +2,7 @@
     "session": {
       "keys": ["sirikey"],
       "options": {
-        "key": "masokoUpgrade",
+        "key": "ecommerceAPI",
         "maxAge": 7776000000,
         "overwrite": true,
         "httpOnly": false,

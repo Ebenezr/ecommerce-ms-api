@@ -28,13 +28,12 @@ const koa_useragent_1 = require("koa-useragent");
 const request_ip_1 = __importDefault(require("request-ip"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const koa_router_1 = __importDefault(require("koa-router"));
-// import MagentoAPI from './datasources/MagentoAPI';
-// import AdminAPI from './datasources/AdminAPI';
 const logging_1 = require("./utils/logging");
 const graphql_depth_limit_1 = __importDefault(require("graphql-depth-limit"));
 const schema_2 = __importDefault(require("./schema"));
 const resolvers_1 = __importDefault(require("./resolvers"));
 const graphql_query_complexity_1 = require("graphql-query-complexity");
+const utils_1 = require("./utils");
 const schema = (0, schema_1.makeExecutableSchema)({ typeDefs: schema_2.default, resolvers: resolvers_1.default });
 const ApolloServerPluginLandingPageDisabled = require('@apollo/server/plugin/disabled').ApolloServerPluginLandingPageDisabled;
 dotenv_1.default.config();
@@ -51,6 +50,8 @@ function startApolloServer(typeDefsParam, resolversParam) {
         const router = new koa_router_1.default();
         const app = new koa_1.default();
         const httpServer = http_1.default.createServer(app.callback());
+        const channel = yield (0, utils_1.CreateChannel)();
+        app.channel = channel;
         const server = new server_1.ApolloServer({
             schema,
             formatError: (formattedError) => {

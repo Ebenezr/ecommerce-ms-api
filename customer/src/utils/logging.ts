@@ -1,9 +1,9 @@
-const { createLogger, format } = require('winston');
-const DailyLog = require('winston-daily-rotate-file');
-const _ = require('lodash');
-const config = require('dotenv');
-const WinstonCloudWatch = require('winston-cloudwatch');
-const getTimeStamp = require('./getTimestamp');
+import { createLogger, format } from 'winston';
+import DailyLog from 'winston-daily-rotate-file';
+import _ from 'lodash';
+import config from 'dotenv';
+import WinstonCloudWatch from 'winston-cloudwatch';
+import getTimeStamp from './getTimestamp';
 
 const { combine, timestamp, label, printf } = format;
 
@@ -98,8 +98,8 @@ if (configValues.ENVIRONMENT === 'aws') {
       new WinstonCloudWatch({
         awsOptions: {
           credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
           },
           region: process.env.AWS_REGION,
         },

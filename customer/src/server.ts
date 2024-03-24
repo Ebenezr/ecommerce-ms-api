@@ -24,6 +24,7 @@ import {
   getComplexity,
 } from 'graphql-query-complexity';
 import { CreateChannel } from './utils';
+import CustomerAPI from './datasources/CustomerAPI';
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -194,7 +195,11 @@ async function startApolloServer(typeDefsParam: any, resolversParam: any) {
         userAgent: ctx.userAgent,
         clientIp,
       };
-      return Promise.resolve(context);
+      return {
+        dataSources: {
+          customerAPI: new CustomerAPI({ cache, context }),
+        },
+      };
     },
   });
   if (typeof GRAPHQL_PATH === 'string') {

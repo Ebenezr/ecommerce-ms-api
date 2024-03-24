@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const convertKeys = require('./convertKeys');
 const Logger = require('./logging');
 const ErrorHandler = require('./errorHandler');
@@ -39,4 +40,4 @@ const LogMessages = (response, mobileNumber, request, apiUrl, payload = {}) => {
         }
     }
 };
-module.exports = LogMessages;
+exports.default = LogMessages;

@@ -21,11 +21,10 @@ export const GeneratePassword = async (
 };
 
 export const ValidatePassword = async (
-  enteredPassword: string,
-  savedPassword: string,
-  salt: string
+  password: string,
+  hashedPassword: string
 ): Promise<boolean> => {
-  return (await GeneratePassword(enteredPassword, salt)) === savedPassword;
+  return bcrypt.compare(password, hashedPassword);
 };
 
 export const GenerateSignature = (

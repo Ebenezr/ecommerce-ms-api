@@ -1,9 +1,12 @@
 const resolvers = {
   Query: {
-    backendConfig: (_: any, __: any, { dataSources }: { dataSources: any }) =>
-      dataSources.customerAPI.getBackendConfig(),
     customer: (_: any, __: any, { dataSources }: { dataSources: any }) =>
       dataSources.customerAPI.customer(),
+    getCookieConsent: (
+      _: any,
+      __: any,
+      { dataSources }: { dataSources: any }
+    ) => dataSources.customerAPI.getCookieConsent(),
   },
   Mutation: {
     signIn: (

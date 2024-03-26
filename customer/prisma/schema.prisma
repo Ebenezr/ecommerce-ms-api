@@ -14,25 +14,47 @@ datasource db {
 }
 
 model Customer {
-  id        String    @id @default(cuid())
-  name      String
-  email     String    @unique
-  salt      String
-  phone     String
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Address   Address[]
+  id               String            @id @default(cuid())
+  name             String
+  email            String            @unique
+  phoneNumber      String            @unique
+  password         String
+  newsletter       Boolean
+  autoSignIn       Boolean
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  Address          Address[]
+  customAttributes CustomAttribute[]
+  lockedUntil      DateTime?
+  retryCount       Int               @default(0)
+}
+
+model CustomAttribute {
+  id         String   @id @default(cuid())
+  attribute  String
+  value      String
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Address {
-  id         String   @id @default(cuid())
-  county     String
-  city       String
-  notes      String
-  zip        String
-  customer   Customer @relation(fields: [customerId], references: [id])
-  customerId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(cuid())
+  terms           Boolean
+  firstName       String
+  lastName        String
+  city            String
+  emails          String
+  countryId       String
+  defaultBilling  Boolean
+  defaultShipping Boolean
+  region          String
+  regionId        Int
+  street          String[]
+  telephone       String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  customerId      String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

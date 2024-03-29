@@ -1,3 +1,5 @@
+import { add } from 'lodash';
+
 const resolvers = {
   Query: {
     customer: (_: any, __: any, { dataSources }: { dataSources: any }) =>
@@ -21,6 +23,16 @@ const resolvers = {
     ) => dataSources.customerAPI.signUp(input),
     signOut: (_: any, __: any, { dataSources }: { dataSources: any }) =>
       dataSources.customerAPI.signOut(),
+    changePassword: (
+      _: any,
+      { input }: { input: any },
+      { dataSources }: { dataSources: any }
+    ) => dataSources.customerAPI.changePassword(input),
+    addCustomerAddress: (
+      _: any,
+      { input }: { input: any },
+      { dataSources }: { dataSources: any }
+    ) => dataSources.customerAPI.addCustomerAddress(input),
   },
 };
 

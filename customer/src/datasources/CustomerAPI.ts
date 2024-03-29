@@ -189,7 +189,11 @@ class CustomerAPI {
     try {
       const customer = await this.prisma.customer.findUnique({
         where: { email: customerToken.email },
+        include: {
+          addresses: true,
+        },
       });
+
       return customer;
     } catch (error: any) {
       logMessages(
@@ -217,6 +221,89 @@ class CustomerAPI {
     } = { status: false };
     response.status = !!allowClientToBrowse;
     return response;
+  }
+  /**
+   * Change password
+   * @param {object} obj Parent object
+   * @param {changePassword} input - form data
+   * @param {string} input.email - user email
+   * @param {string} input.password - user password
+   * @return {Promise<boolean>} true if password was changed successfully
+   */
+  async changePassword(input: any) {
+    const { email, password } = input;
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await this.prisma.customer.update({
+        where: { email },
+        data: { password: hashedPassword },
+      });
+      return {
+        status: true,
+        message: 'Password changed successfully',
+      };
+    } catch (error: any) {
+      logMessages(
+        error,
+        'Error occured during password change',
+        '/changePassword',
+        {}
+      );
+      return {
+        status: false,
+        message: 'Password change failed',
+      };
+    }
+  }
+  /**
+   * Add customer address
+   * @param {object} obj Parent object
+   * @param {AddressInput} input - form data
+   * @param {string} input.email - user email
+   * @param {string} input.address - user address
+   * @return {Promise<boolean>} true if address was added successfully
+   */
+  async addCustomerAddress(input: any) {
+    const { customerId, defaultShipping, defaultBilling, ...address } = input;
+
+    try {
+      const createdAddress = await this.prisma.address.create({
+        data: {
+          ...address,
+          defaultBilling,
+          defaultShipping,
+          customer: {
+            connect: {
+              id: customerId,
+            },
+          },
+        },
+      });
+      if (defaultShipping || defaultBilling) {
+        await this.prisma.customer.update({
+          where: { id: customerId },
+          data: {
+            defaultShipping: defaultShipping ? createdAddress.id : undefined,
+            defaultBilling: defaultBilling ? createdAddress.id : undefined,
+          },
+        });
+      }
+      return {
+        status: true,
+        message: 'Address added successfully',
+      };
+    } catch (error: any) {
+      logMessages(
+        error,
+        'Error occured during address addition',
+        '/addCustomerAddress',
+        {}
+      );
+      return {
+        status: false,
+        message: 'Address addition failed',
+      };
+    }
   }
 }
 

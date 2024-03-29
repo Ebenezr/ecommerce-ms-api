@@ -21,9 +21,11 @@ model Customer {
   password         String
   newsletter       Boolean
   autoSignIn       Boolean
+  defaultBilling   String?
+  defaultShipping  String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  Address          Address[]
+  addresses        Address[]
   customAttributes CustomAttribute[]
   lockedUntil      DateTime?
   retryCount       Int               @default(0)
@@ -45,7 +47,7 @@ model Address {
   firstName       String
   lastName        String
   city            String
-  emails          String
+  email           String
   countryId       String
   defaultBilling  Boolean
   defaultShipping Boolean

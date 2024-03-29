@@ -61,15 +61,11 @@ const typeDefs = `#graphql
   input AddressInput {
     id: ID
     terms: Boolean
-    firstname: String
-    lastname: String
+    firstName: String
+    lastName: String
     city: String
-    customerId: Int
-    customerAddressId: Int
-    sameAsBilling: Int
-    saveInAddressBook: Int
+    customerId: String
     email: String
-    company: String
     countryId: String
     defaultBilling: Boolean
     defaultShipping: Boolean
@@ -103,11 +99,10 @@ const typeDefs = `#graphql
 
     type Customer {
     id: ID
-    addresses: [Address]
+    addresses: [CustomerAddress]
     defaultBilling: String
     defaultShipping: String
     email: String
-
     name: String
     phoneNumber: String
     newsletterSubscriber: Boolean
@@ -115,19 +110,21 @@ const typeDefs = `#graphql
 
   }
 
-    type Address {
+  type CustomerAddress{
     id: ID
-    firstname: String
-    lastname: String
+    terms: Boolean
+    firstName: String
+    lastName: String
     city: String
-    postcode: String
+    customerId: String
+    email: String
     countryId: String
-    defaultBilling: Boolean
-    defaultShipping: Boolean
-    region: String
-    regionId: Int
-    street: [String]
-    telephone: String
+  }
+
+    type Address {
+      status: Boolean
+
+    message: String
   }
 
     type Region {

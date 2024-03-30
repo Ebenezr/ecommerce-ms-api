@@ -1,26 +1,3 @@
-Skip to content
-Ebenezr
-/
-node-microservices
-
-Type / to search
-
-Code
-Issues
-Pull requests
-1
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Continuous Integration
-Create CI_Workflow.yml #3
-Jobs
-Run details
-Workflow file for this run
-.github/workflows/CI_Workflow.yml at caa855f
 name: Continuous Integration
 
 on:

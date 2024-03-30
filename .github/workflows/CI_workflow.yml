@@ -52,4 +52,3 @@ jobs:
           npm i
           fi
           npm test
-Update CI_Workflow.yml · Ebenezr/node-microservices@caa855f

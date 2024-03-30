@@ -1,0 +1,78 @@
+Skip to content
+Ebenezr
+/
+node-microservices
+
+Type / to search
+
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+Continuous Integration
+Create CI_Workflow.yml #3
+Jobs
+Run details
+Workflow file for this run
+.github/workflows/CI_Workflow.yml at caa855f
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  ci_verification:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Test Customer Service
+        working-directory: ./customer
+        run: |
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          elif [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+          npm test
+      - name: Test Products Service
+        working-directory: ./products
+        run: |
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          elif [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+          npm test
+      - name: Test Shopping Service
+        working-directory: ./shopping
+        run: |
+          if [ -e yarn.lock ]; then
+          yarn install --frozen-lockfile
+          elif [ -e package-lock.json ]; then
+          npm ci
+          else
+          npm i
+          fi
+          npm test
+Update CI_Workflow.yml · Ebenezr/node-microservices@caa855f

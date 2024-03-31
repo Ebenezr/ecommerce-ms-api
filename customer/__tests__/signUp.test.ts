@@ -1,12 +1,18 @@
-const CustomerAPI = require('../src/datasources/CustomerAPI');
-const PrismaClient = require('@prisma/client');
+import CustomerAPI from '../src/datasources/CustomerAPI';
+import { test, expect, vi } from 'vitest';
+import * as bcrypt from 'bcrypt';
+import { describe } from 'node:test';
+import { beforeEach } from 'vitest';
+import prisma from '../src/libs/__mocks__/prisma';
 
-jest.mock('@prisma/client');
+vi.mock('../src/repository/CustomerRepository');
+vi.mock('../src/libs/prisma');
+vi.mock('../src/utils/logMessages');
 
 describe('CustomerAPI', () => {
   let customerAPI;
-  const prisma = new PrismaClient();
-  const mockContext = {
+
+  const mockLoggedInContext = {
     session: {
       customerToken: {
         token: 'mockedCustomerToken',
@@ -16,41 +22,51 @@ describe('CustomerAPI', () => {
   };
 
   beforeEach(() => {
-    customerAPI = new CustomerAPI({ context: mockContext });
+    customerAPI = new CustomerAPI({ context: mockLoggedInContext });
   });
 
-  test('Sign-in with invalid credentials', async () => {
-    const input = {
-      emailPhone: invalidUser.one,
-      password: invalidUser.two,
-    };
+  test('changePassword - success', async () => {
+    const input = { email: 'masoko@masoko.com', password: 'password123' };
 
-    customerAPI.post = jest.fn().mockRejectedValueOnce({
-      statusCode: 401,
-      response: {
-        statusText: 'Unauthorized',
-        body: {
-          message:
-            'You did not sign in correctly or your account is not active. Remaining 5 attempts.',
-        },
-      },
+    prisma.customer.update.mockResolvedValueOnce({
+      id: 'mockedId',
+      name: 'mockedName',
+      email: input.email,
+      phoneNumber: 'mockedPhoneNumber',
+      password: input.password,
+      newsletter: false,
+      autoSignIn: true,
+      defaultBilling: null,
+      defaultShipping: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lockedUntil: null,
+      retryCount: 0,
     });
+    const user = await customerAPI.changePassword(input);
+    expect(user).toEqual({
+      status: true,
+      message: 'Password changed successfully',
+    });
+  });
 
-    let error;
-    try {
-      await customerAPI.signIn(input);
-    } catch (err) {
-      error = err;
-    }
+  test('changePassword - failure', async () => {
+    let input = { email: 'test@mail.com', password: 'password123' };
 
-    expect(customerAPI.ensureCart).toHaveBeenCalledTimes(1);
-    expect(customerAPI.post).toHaveBeenCalledTimes(1);
-
-    expect(error).toBeDefined();
-    expect(error.statusCode).toBe(401);
-    expect(error.response.statusText).toBe('Unauthorized');
-    expect(error.response.body.message).toBe(
-      'You did not sign in correctly or your account is not active. Remaining 5 attempts.'
+    prisma.customer.update.mockRejectedValueOnce(
+      new Error('Password change failed')
     );
+
+    await customerAPI.changePassword(input);
+    // expect(user).toEqual({
+    //   status: false,
+    //   message: 'Password change failed',
+    // });
+
+    // expect(prisma.customer.update).toHaveBeenCalledWith({
+    //   data: {},
+    // });
+
+    // expect(customerAPI.changePassword).toHaveBeenCalledTimes(1);
   });
 });

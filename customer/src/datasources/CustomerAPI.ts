@@ -1,6 +1,6 @@
+import { CustomerRepository } from '../repository/CustomerRepository';
 import logMessages from '../utils/logMessages';
 import { GenerateSignature, ValidatePassword } from '../utils';
-import { PrismaClient } from '@prisma/client';
 import { addMinutes } from 'date-fns';
 import config from 'dotenv';
 import bcrypt from 'bcrypt';
@@ -9,12 +9,13 @@ config.config();
 const configValues = process.env;
 
 class CustomerAPI {
-  prisma: PrismaClient;
   context: any;
+  repository: CustomerRepository;
 
   constructor(options: any) {
-    this.prisma = new PrismaClient();
     this.context = options.context;
+    this.repository = new CustomerRepository();
+
     // this.timeout = 30000;
   }
 
@@ -34,17 +35,16 @@ class CustomerAPI {
    * @return {Promise<boolean>} true if login was successful
    */
   async signIn(input: any) {
-    const { email, password, rememberMe } = input;
+    const { email, password, autoSignIn } = input;
     const LOCKOUT_DURATION_MINUTES = parseInt(
       process.env.LOCKOUT_DURATION_MINUTES || '15'
     ); // Default to 15 if the env variable is not set
-    const SESSION_DURATION_HOURS = rememberMe ? 24 * 7 : 1; // 1 hour for normal sessions, 1 week for "Remember Me"
+    const SESSION_DURATION_HOURS = autoSignIn ? 24 * 7 : 1; // 1 hour for normal sessions, 1 week for "Remember Me"
 
     const dateNow = Date.now();
     try {
-      const existingCustomer = await this.prisma.customer.findUnique({
-        where: { email },
-      });
+      const existingCustomer = await this.repository.findCustomer(email);
+
       if (!existingCustomer)
         throw new Error('user not found with provided email id!');
 
@@ -74,18 +74,13 @@ class CustomerAPI {
           existingCustomer.lockedUntil = new Date(
             dateNow + LOCKOUT_DURATION_MINUTES * 60 * 1000
           ); // Lock the account for LOCKOUT_DURATION_MINUTES minutes
-          await this.prisma.customer.update({
-            where: { email },
-            data: existingCustomer,
-          });
+
+          await this.repository.updateCustomer(email, existingCustomer);
           throw new Error(
             'You did not sign in correctly or your account is not active. No more attempts left.'
           );
         } else {
-          await this.prisma.customer.update({
-            where: { email },
-            data: existingCustomer,
-          });
+          await this.repository.updateCustomer(email, existingCustomer);
           throw new Error(
             `You did not sign in correctly or your account is not active. Remaining ${
               5 - existingCustomer.retryCount
@@ -112,16 +107,19 @@ class CustomerAPI {
       // Reset the retry count and unlock the account on successful sign in
       existingCustomer.retryCount = 0;
       existingCustomer.lockedUntil = null;
-      await this.prisma.customer.update({
-        where: { email },
-        data: existingCustomer,
-      });
+      await this.repository.updateCustomer(email, existingCustomer);
       return {
         status: true,
         message: 'Sign in successfully',
       };
     } catch (error: any) {
-      logMessages(error, 'Error occured during sign in', '/signIn', {});
+      logMessages(
+        error,
+        'Error occured during sign in',
+        'signin',
+        '/signIn',
+        {}
+      );
       return {
         status: false,
         message: error?.message || 'Sign in failed',
@@ -136,16 +134,13 @@ class CustomerAPI {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const existingCustomer = await this.prisma.customer.create({
-        data: {
-          name,
-          email,
-          password: hashedPassword,
-          phoneNumber,
-
-          newsletter,
-          autoSignIn,
-        },
+      const existingCustomer = await this.repository.createCustomer({
+        name,
+        email,
+        password: hashedPassword,
+        phoneNumber,
+        newsletter,
+        autoSignIn,
       });
 
       const token = await GenerateSignature({
@@ -169,8 +164,14 @@ class CustomerAPI {
         status: true,
         message: 'Sign up successfully',
       };
-    } catch (error) {
-      logMessages(error, 'Error occured during sign up', '/signUp', {});
+    } catch (error: any) {
+      logMessages(
+        error,
+        'Error occured during sign up',
+        'signup',
+        '/signUp',
+        {}
+      );
       return {
         status: false,
         message: 'Sign up failed',
@@ -187,11 +188,8 @@ class CustomerAPI {
       throw new Error('Unauthorized');
     }
     try {
-      const customer = await this.prisma.customer.findUnique({
-        where: { email: customerToken.email },
-        include: {
-          addresses: true,
-        },
+      const customer = await this.repository.findCustomer(customerToken.email, {
+        addresses: true,
       });
 
       return customer;
@@ -199,8 +197,8 @@ class CustomerAPI {
       logMessages(
         error,
         'Wrror occured during customer query',
-        '/customer',
-        {}
+        'customer',
+        '/customer'
       );
       throw new Error('Unauthorized');
     }
@@ -234,10 +232,8 @@ class CustomerAPI {
     const { email, password } = input;
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await this.prisma.customer.update({
-        where: { email },
-        data: { password: hashedPassword },
-      });
+
+      await this.repository.changePassword(email, hashedPassword);
       return {
         status: true,
         message: 'Password changed successfully',
@@ -246,8 +242,8 @@ class CustomerAPI {
       logMessages(
         error,
         'Error occured during password change',
-        '/changePassword',
-        {}
+        'changePassword',
+        '/changePassword'
       );
       return {
         status: false,
@@ -264,40 +260,15 @@ class CustomerAPI {
    * @return {Promise<boolean>} true if address was added successfully
    */
   async addCustomerAddress(input: any) {
-    const { customerId, defaultShipping, defaultBilling, ...address } = input;
-
     try {
-      const createdAddress = await this.prisma.address.create({
-        data: {
-          ...address,
-          defaultBilling,
-          defaultShipping,
-          customer: {
-            connect: {
-              id: customerId,
-            },
-          },
-        },
-      });
-      if (defaultShipping || defaultBilling) {
-        await this.prisma.customer.update({
-          where: { id: customerId },
-          data: {
-            defaultShipping: defaultShipping ? createdAddress.id : undefined,
-            defaultBilling: defaultBilling ? createdAddress.id : undefined,
-          },
-        });
-      }
-      return {
-        status: true,
-        message: 'Address added successfully',
-      };
+      return await this.repository.addCustomerAddress(input);
     } catch (error: any) {
       logMessages(
         error,
         'Error occured during address addition',
+        'addCustomerAddress',
         '/addCustomerAddress',
-        {}
+        {} // Add an empty object as the fourth argument
       );
       return {
         status: false,
@@ -308,8 +279,3 @@ class CustomerAPI {
 }
 
 export default CustomerAPI;
-
-/*
-@TODO
-Session management: You're storing the JWT token in the session, which is fine for a server-side session. However, if you're using a client-side session (like a cookie), you should consider storing the token on the client side to reduce server load and make your application more scalable.
-*/

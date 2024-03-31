@@ -1,9 +1,9 @@
-const isPlainObject = require('lodash/isPlainObject');
-const camelCase = require('lodash/camelCase');
-const keys = require('lodash/keys');
-const isEmpty = require('lodash/isEmpty');
+import isPlainObject from 'lodash/isPlainObject';
+import camelCase from 'lodash/camelCase';
+import keys from 'lodash/keys';
+import isEmpty from 'lodash/isEmpty';
 
-const convertKeys = (data: any) => {
+const convertKeys = (data: any): any => {
   // handle simple types
   if (!isPlainObject(data) && !Array.isArray(data)) {
     return data;
@@ -11,7 +11,7 @@ const convertKeys = (data: any) => {
 
   if (isPlainObject(data) && !isEmpty(data)) {
     const keysToConvert = keys(data);
-    keysToConvert.forEach((key: any) => {
+    keysToConvert.forEach((key: string) => {
       // eslint-disable-next-line no-param-reassign
       data[camelCase(key)] = convertKeys(data[key]);
 

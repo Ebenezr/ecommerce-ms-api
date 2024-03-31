@@ -9,7 +9,8 @@
     "target": "es6",
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
-    "strict": true
+    "strict": true,
+    "types":["jest","node"]
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*", "prisma/**/*","tests/*.ts"]
 }

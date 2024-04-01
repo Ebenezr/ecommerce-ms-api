@@ -5,21 +5,15 @@ import macSign from './macSign';
 
 const encryptSign = (
   ikm: string,
-  info: string,
   authenticationTag: string,
   plainText: string
 ): string => {
   const iv: Buffer = crypto.randomBytes(16);
   try {
-    const cipherText: string = encrypt(
-      plainText,
-      iv.toString('base64'),
-      ikm,
-      info
-    );
-    const signedCipher: string = macSign(ikm, authenticationTag, cipherText);
+    const { encrypted } = encrypt(plainText);
+    const signedCipher: string = macSign(ikm, authenticationTag, encrypted);
     const macBuffer: Buffer = Buffer.from(signedCipher, 'base64');
-    const cipherTextBuffer: Buffer = Buffer.from(cipherText, 'base64');
+    const cipherTextBuffer: Buffer = Buffer.from(encrypted, 'base64');
     return Buffer.concat([
       Buffer.alloc(1, iv.length),
       iv,

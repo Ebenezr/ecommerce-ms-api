@@ -51,6 +51,7 @@ const typeDefs = `#graphql
   input SignIn {
     email: String!
     password: String!
+    autoSignIn: Boolean
   }
 
 

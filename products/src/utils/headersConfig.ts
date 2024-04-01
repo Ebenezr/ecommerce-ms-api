@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { config as dotenvConfig } from 'dotenv';
-import { v4 as uuid } from 'uuid';
+const config = require('dotenv');
+const { v4: uuid } = require('uuid');
 
-dotenvConfig();
+config.config();
 const configValues = process.env;
 
 // Some of the headers that are commonly used
@@ -83,4 +83,4 @@ class HeadersConfig {
   }
 }
 
-export default HeadersConfig;
+module.exports = HeadersConfig;

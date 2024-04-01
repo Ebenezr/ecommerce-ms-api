@@ -1,25 +1,14 @@
-import convertKeys from './convertKeys';
-import { Logger } from './logging';
-import ErrorHandler from './errorHandler';
-
-interface ResponseHeader {
-  responseCode: number;
-  responseMessage: string;
-  customerMessage: string;
-}
-
-interface Response {
-  header?: ResponseHeader;
-  [key: string]: any;
-}
+const convertKeys = require('./convertKeys');
+const { Logger } = require('./logging');
+const ErrorHandler = require('./errorHandler');
 
 const LogMessages = (
-  response: Response,
-  mobileNumber: string,
+  response: any,
+  mobileNumber: any,
   request: any,
-  apiUrl: string,
-  payload: any = {}
-): void => {
+  apiUrl: any,
+  payload = {}
+) => {
   if (!response.header) {
     Logger.log('error', 'Error: ', {
       fullError: response,
@@ -32,17 +21,16 @@ const LogMessages = (
         'Sorry we are experiencing a technical problem. Please try again later',
     });
   } else {
-    const { responseCode, responseMessage, customerMessage } =
-      convertKeys(response)?.header || {};
-
-    console.log('response', response);
+    const {
+      header: { responseCode, responseMessage, customerMessage },
+    } = convertKeys(response);
     if (responseCode === 200 || responseCode === 1000) {
       Logger.log('info', 'Success: ', {
         message: 'Request Sucessful',
         request,
         payload,
         msisdn: mobileNumber,
-        response: convertKeys(response),
+        response,
         url: apiUrl,
       });
     } else {

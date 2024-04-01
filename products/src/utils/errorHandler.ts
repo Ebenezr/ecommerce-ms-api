@@ -1,11 +1,6 @@
-import errors from '../static/error.json';
+const errors = require('../static/error.json');
 
-interface ErrorItem {
-  technicalError: string;
-  customerMessage: string;
-}
-
-const errorHandler = (message: any): string => {
+const errorHandler = (message: any) => {
   const errorCode = Number(message);
   const string = message
     ? message.toString()
@@ -13,9 +8,8 @@ const errorHandler = (message: any): string => {
   const networkTimeout =
     'Dear Customer, we are unable to complete your request at the moment. Please try again later.';
   const checkMatch = errors.filter(
-    (item: ErrorItem) => item.technicalError === string
+    (item: any) => item.technicalError === string
   );
-
   if (checkMatch.length) {
     return checkMatch[0].customerMessage;
   }
@@ -32,4 +26,4 @@ const errorHandler = (message: any): string => {
   return message;
 };
 
-export default errorHandler;
+module.exports = errorHandler;

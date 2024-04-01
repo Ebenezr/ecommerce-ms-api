@@ -10,4 +10,4 @@ const convertDateToString = (date: any) => {
   return `${year}-${month}-${day}`;
 };
 
-module.exports = convertDateToString;
+export default convertDateToString;

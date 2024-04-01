@@ -57,7 +57,8 @@ describe('CustomerAPI', () => {
       new Error('Password change failed')
     );
 
-    await customerAPI.changePassword(input);
+    const response = await customerAPI.changePassword(input);
+
     // expect(user).toEqual({
     //   status: false,
     //   message: 'Password change failed',

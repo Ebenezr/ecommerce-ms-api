@@ -38,6 +38,7 @@ const LogMessages = (
     if (responseCode === 200 || responseCode === 1000) {
       Logger.log('info', 'Success: ', {
         message: 'Request Successful',
+
         // ... rest of the code
       });
     }

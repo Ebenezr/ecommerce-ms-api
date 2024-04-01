@@ -4,10 +4,10 @@ import { Logger } from '../logging';
 const getAlgorithm = (keyPassed: string): string => {
   const key: Buffer = Buffer.from(keyPassed, 'base64');
   if (key.length === 16) {
-    return 'aes-128-cbc';
+    return 'AES-256-GCM';
   }
   if (key.length === 32) {
-    return 'aes-256-cbc';
+    return 'AES-256-GCM';
   }
   const customerMessage: string = 'invalid key passed';
   const technicalMessage: string = `Invalid key length: ${key.length}`;

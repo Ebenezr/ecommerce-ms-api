@@ -4,7 +4,7 @@ import { Logger } from '../logging';
 
 const decryptSignedCipher = (
   ikm: string,
-  info: string,
+
   authenticationTag: string,
   serializedResponse: string
 ): string => {
@@ -27,7 +27,7 @@ const decryptSignedCipher = (
   }
   const cipherText: string = cipher.toString('base64');
   try {
-    return decrypt(cipherText, iv.toString('base64'), ikm, info);
+    return decrypt(cipherText, iv.toString('base64'));
   } catch (e) {
     const customerMessage: string = 'Unable to decrypt';
     Logger.log('error', 'Error ', {

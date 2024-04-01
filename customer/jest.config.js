@@ -1,9 +1,13 @@
 const config = {
   coverageProvider: 'v8',
   testEnvironment: 'node',
-  testMatch: ['**/tests/**/*.test.js'],
+  testMatch: ['**/tests/**/*.test.ts'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.js', '!src/schema.js', '!src/resolvers.js'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!**/src/schema.ts',
+    '!**/src/resolvers.ts',
+  ],
   coverageDirectory: 'coverage',
   coverageThreshold: {
     global: {

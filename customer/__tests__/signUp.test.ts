@@ -7,6 +7,7 @@ import prisma from '../src/libs/__mocks__/prisma';
 import { GenerateSignature, ValidatePassword } from '../src/utils';
 import sinon from 'sinon';
 
+
 vi.mock('../src/repository/CustomerRepository');
 vi.mock('../src/libs/prisma');
 vi.mock('../src/utils/logMessages');
@@ -52,8 +53,10 @@ describe('CustomerAPI', () => {
     });
   });
 
+
   test('changePassword - failure', async () => {
     let input = { email: 'test@mail.com', password: 'password123' };
+
 
     prisma.customer.update.mockRejectedValueOnce(
       new Error('Password change failed')
@@ -71,6 +74,7 @@ describe('CustomerAPI', () => {
     // });
 
     // expect(customerAPI.changePassword).toHaveBeenCalledTimes(1);
+
   });
 
   describe('signIn', () => {
@@ -127,5 +131,6 @@ describe('CustomerAPI', () => {
         expect(error.message).toBe('Invalid password');
       }
     });
+
   });
 });

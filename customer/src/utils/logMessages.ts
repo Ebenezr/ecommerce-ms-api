@@ -32,14 +32,28 @@ const LogMessages = (
         'Sorry we are experiencing a technical problem. Please try again later',
     });
   } else {
-    const {
-      header: { responseCode, responseMessage, customerMessage },
-    } = convertKeys(response);
+    const { responseCode, responseMessage, customerMessage } =
+      convertKeys(response)?.header || {};
+
+    console.log('response', response);
     if (responseCode === 200 || responseCode === 1000) {
       Logger.log('info', 'Success: ', {
-        message: 'Request Successful',
-
-        // ... rest of the code
+        message: 'Request Sucessful',
+        request,
+        payload,
+        msisdn: mobileNumber,
+        response: convertKeys(response),
+        url: apiUrl,
+      });
+    } else {
+      Logger.log('error', 'Error: ', {
+        fullError: response,
+        msisdn: mobileNumber,
+        request,
+        payload,
+        customError: `Got (${responseCode}) while hitting ${apiUrl}`,
+        actualError: responseMessage,
+        customerMessage: ErrorHandler(customerMessage),
       });
     }
   }

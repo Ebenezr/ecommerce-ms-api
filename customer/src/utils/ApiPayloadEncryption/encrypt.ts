@@ -1,34 +1,37 @@
 import crypto from 'crypto';
+import config from 'dotenv';
 import { Logger } from '../logging';
-import getAlgorithm from './getAlgorithm';
-import { generateHkdfKey } from './generateHkdfKey';
 
-const encrypt = (
-  plainText: string,
-  ivParam: string,
-  ikm: string,
-  info: string
-): string => {
-  const encryptionHkdfKey: Buffer = generateHkdfKey(ikm, 16, null, info);
-  const key = Buffer.from(encryptionHkdfKey.toString('base64'), 'base64');
-  const iv = Buffer.from(ivParam || '', 'base64');
+config.config();
+const configValues = process.env;
+
+const encrypt = (plainText: string) => {
+  const encryptionKey = configValues.ENCRYPTION_KEY;
+  const initializationVector = configValues.INITIALIZATION_VECTOR;
+
+  const binaryEncryptionKey = Buffer.from(encryptionKey || '', 'base64');
+  const binaryIV = Buffer.from(initializationVector || '', 'base64');
 
   try {
     const cipher = crypto.createCipheriv(
-      getAlgorithm(encryptionHkdfKey.toString()),
-      key,
-      iv
+      'AES-256-GCM',
+      binaryEncryptionKey,
+      binaryIV
     ) as crypto.CipherGCM;
-    let encrypted: string = cipher.update(plainText, 'utf8', 'base64');
+
+    let encrypted = cipher.update(plainText, 'utf8', 'base64');
     encrypted += cipher.final('base64');
-    return encrypted;
-  } catch (e) {
+
+    // Retrieve the authentication tag
+    const authTag = cipher.getAuthTag();
+    return { encrypted, authTag: authTag.toString('base64') };
+  } catch (error: any) {
     const customerMessage: string = 'Unable to encrypt';
     Logger.log('error', 'Error ', {
       customerMessage,
       request: 'encrypt (APiPayloadEncryption)',
-      actualError: e,
-      fullError: e,
+      actualError: error?.message,
+      fullError: error?.stack,
     });
     throw new Error(customerMessage);
   }

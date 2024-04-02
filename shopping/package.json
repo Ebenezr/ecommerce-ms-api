@@ -6,9 +6,23 @@
   "scripts": {
     "start": "NODE_ENV=prod node src/index.js",
     "dev": "NODE_ENV=dev nodemon src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:push": "drizzle-kit push:pg",
+    "db:migrate": "tsx ./migration.ts",
+    "db:studio": "drizzle-kit studio --port 6000"
   },
   "keywords": [],
   "author": "Ebenezr",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.30.6",
+    "pg": "^8.11.4"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.4",
+    "drizzle-kit": "^0.20.14",
+    "tsx": "^4.7.1"
+  }
 }

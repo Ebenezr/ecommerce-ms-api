@@ -1,0 +1,59 @@
+[
+  {
+    "technicalError": "ECONNREFUSED",
+    "customerMessage": "We are unable to complete your request. Please try again later."
+  },
+  {
+    "technicalError": "ECONNRESET",
+    "customerMessage": "We are unable to complete your request. Please try again later."
+  },
+  {
+    "technicalError": "ETIMEDOUT",
+    "customerMessage": "The operation has timed out. Please try again or contact @Safaricom_Care on Twitter."
+  },
+  {
+    "technicalError": "ENOTFOUND",
+    "customerMessage": "Sorry, a technical error occurred. Please try again later."
+  },
+  {
+    "technicalError": "ERR_TLS_CERT_ALTNAME_INVALID",
+    "customerMessage": "We encountered an invalid certificate when requesting data. Please try again later."
+  },
+  {
+    "technicalError": "404",
+    "customerMessage": "Oops! We are sorry we couldn't complete this transaction. Please contact @Safaricom_Care on Twitter."
+  },
+  {
+    "technicalError": "502",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later"
+  },
+  {
+    "technicalError": "504",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later"
+  },
+  {
+    "technicalError": "503",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later"
+  },
+  {
+    "technicalError": "500",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later"
+  },
+  {
+    "technicalError": "401",
+    "customerMessage": "Sorry we are experiencing a technical problem.  Please refresh this page again. If the problem persists, please try again later."
+  },
+  {
+    "technicalError": "No message available",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later"
+  },
+  {
+    "technicalError": "Context creation failed: Oops! You are not authorised to access this server",
+    "customerMessage": "Sorry, you are not allowed to access this page"
+  },
+  {
+    "technicalError": "Unexpected end of JSON input",
+    "customerMessage": "Sorry we are experiencing a technical problem. Please try again later."
+  }
+]
+
